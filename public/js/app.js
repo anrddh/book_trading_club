@@ -1,6 +1,6 @@
-var Books = angular.module('Books', ['ngRoute']);
+var readNook = angular.module('readNook', ['ngRoute']);
 
-Books.factory('auth', ['$http', '$window', '$location', function($http, $window, $location) {
+readNook.factory('auth', ['$http', '$window', '$location', function($http, $window, $location) {
     var auth = {};
 
     auth.saveToken = function(token) {
@@ -52,7 +52,7 @@ Books.factory('auth', ['$http', '$window', '$location', function($http, $window,
     return auth;
 }]);
 
-Books.config(function($routeProvider) {
+readNook.config(function($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: '../views/home.html',

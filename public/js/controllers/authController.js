@@ -1,4 +1,4 @@
-Books.controller("authController", ['$scope', 'auth', '$location', function($scope, auth, $location) {
+readNook.controller("authController", ['$scope', 'auth', '$location', function($scope, auth, $location) {
     $scope.user = {};
 
     if(auth.isLoggedIn()) {
