@@ -1,4 +1,4 @@
-var readNook = angular.module('readNook', ['ngRoute']);
+var readNook = angular.module('readNook', ['ngRoute', 'angular-loading-bar']);
 
 readNook.factory('auth', ['$http', '$window', '$location', function($http, $window, $location) {
     var auth = {};
@@ -57,6 +57,21 @@ readNook.config(function($routeProvider) {
         .when('/', {
             templateUrl: '../views/home.html',
             controller: 'mainController'
+        })
+
+        .when('/user', {
+            templateUrl: '../views/user.html',
+            controller: 'userController'
+        })
+
+        .when('/books', {
+            templateUrl: '../views/books.html',
+            controller: 'bookController'
+        })
+
+        .when('/user/books', {
+            templateUrl: '../views/userBooks.html',
+            controller: 'userBooksController'
         })
 
         .when('/login', {

@@ -1,0 +1,15 @@
+<div class="customContainer">
+    <div class="alert alert-success alert-dismissible" role="alert" ng-show="showSuccessAlert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{message}}
+    </div>
+    <h1>Update user preferences:</h1>
+    <hr>
+    <form ng-submit="updateInfo()">
+        <label for="name">Full name</label><input type="textbox" id="name" class="form-control addBookTextbox" ng-model="name" placeholder="{{name}}">
+        <label for="city">City</label><input type="textbox" id="city" class="form-control addBookTextbox" ng-model="city" placeholder="{{city}}">
+        <label for="state">State</label><input type="textbox" id="state" class="form-control addBookTextbox" ng-model="state" placeholder="{{state}}">
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+    <hr>
+</div>

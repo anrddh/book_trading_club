@@ -6,6 +6,7 @@
 
         <title>Read Nook</title>
 
+        <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.7.1/loading-bar.min.css' type='text/css' media='all' />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./css/main.css">
 
@@ -13,8 +14,12 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.js"></script>
+        <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.7.1/loading-bar.min.js'></script>
         <script src="./js/app.js"></script>
         <script src="./js/controllers/mainController.js"></script>
+        <script src="./js/controllers/bookController.js"></script>
+        <script src="./js/controllers/userController.js"></script>
+        <script src="./js/controllers/userBooksController.js"></script>
         <script src="./js/controllers/authController.js"></script>
     </head>
     <body ng-controller="mainController">
@@ -33,15 +38,14 @@
                     <div id="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="#/">Home</a></li>
-                            <li ng-show="isLoggedIn"><a href="#/polls">All Books</a></li>
-                            <li ng-show="isLoggedIn"><a href="#/polls/new">New Book</a></li>
+                            <li ng-show="isLoggedIn()"><a href="#/books">All Books</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li ng-show="isLoggedIn"><a>My Books</a></li>
-                            <li ng-show="isLoggedIn"><a>{{ currentUser }}</a></li>
-                            <li ng-show="isLoggedIn"><a href="" ng-click="logOut()">Log out</a></li>
-                            <li ng-hide="isLoggedIn"><a href="#/login">Login</a></li>
-                            <li ng-hide="isLoggedIn"><a href="#/register">Sign Up</a></li>
+                            <li ng-show="isLoggedIn()"><a href="#/user/books">My Books</a></li>
+                            <li ng-show="isLoggedIn()"><a href="#/user">{{ currentUser }}</a></li>
+                            <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log out</a></li>
+                            <li ng-hide="isLoggedIn()"><a href="#/login">Login</a></li>
+                            <li ng-hide="isLoggedIn()"><a href="#/register">Sign Up</a></li>
                         </ul>
                     </div>
                 </div>

@@ -3,6 +3,12 @@ var Schema   = mongoose.Schema;
 var crypto   = require('crypto');
 var jwt      = require('jsonwebtoken');
 
+var bookSchema = new Schema({
+    name: String,
+    author: String,
+    cover: String
+});
+
 var userSchema = new Schema({
     username: { type: String, lowercase: true},
     name: String,
@@ -10,8 +16,7 @@ var userSchema = new Schema({
     state: String,
     hash: String,
     salt: String,
-    bookNames:[String],
-    bookAuthors:[String]
+    books: [bookSchema]
 });
 
 userSchema.methods.setPassword = function(password){

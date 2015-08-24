@@ -5,9 +5,15 @@ var auth     = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 module.exports = function(app) {
     app.get('/api/user/books/:user_name', auth, function(req, res) {
-        User.find({username: req.params.user_name}, function(err, user) {
+        User.find({username: req.params.user_name}, "books", function(err, books) {
             if(err) res.send(err);
-            res.json(user.books);
+            res.json(books);
+        });
+    });
+
+    app.get('/api/users', auth, function(req, res) {
+        User.find({}, "username books", function(err, users) {
+            res.json(users);
         });
     });
 
@@ -15,10 +21,14 @@ module.exports = function(app) {
         User.find({username: req.body.username}, function(err, user) {
             if(err) res.send(err);
 
-            user.bookNames.push(req.body.name);
-            user.bookAuthors.push(req.body.author);
+            var books = {
+                name: req.body.name,
+                author: req.body.author
+            }
 
-            user.save(function(err) {
+            user[0].books.push(books);
+
+            user[0].save(function(err) {
                 if(err) res.send(err);
             });
 
@@ -26,17 +36,50 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/api/user/books/delete', auth, function(req, res) {
+        User.find({username: req.body.username}, function(err, user) {
+            if(err) res.send(err);
+
+            var index = user[0].books.indexOf(req.body.book);
+
+            user[0].books.splice(index, 1);
+
+            user[0].save(function(err) {
+                if(err) res.send(err);
+            });
+
+            res.json({message: "Successfully removed book!"});
+        });
+    });
+
+    app.get('/api/user/name', auth, function(req, res) {
+        User.find({username: req.body.username}, "name", function(err, user) {
+            if(err) res.send(err);
+
+            res.json(user[0]);
+        });
+    });
+
+
     app.post('/api/user/name/update', auth, function(req, res) {
         User.find({username: req.body.username}, function(err, user) {
             if(err) res.send(err);
 
-            user.name = req.body.name;
+            user[0].name = req.body.name;
 
-            user.save(function(err) {
+            user[0].save(function(err) {
                 if(err) res.send(err);
             });
 
-            res.json({message: "Successfully updated name!"});
+            res.json({message: "Successfully updated preferences!"});
+        });
+    });
+
+    app.get('/api/user/city', auth, function(req, res) {
+        User.find({username: req.body.username}, "city", function(err, user) {
+            if(err) res.send(err);
+
+            res.json(user[0]);
         });
     });
 
@@ -44,13 +87,21 @@ module.exports = function(app) {
         User.find({username: req.body.username}, function(err, user) {
             if(err) res.send(err);
 
-            user.city = req.body.city;
+            user[0].city = req.body.city;
 
-            user.save(function(err) {
+            user[0].save(function(err) {
                 if(err) res.send(err);
             });
 
-            res.json({message: "Successfully updated city!"});
+            res.json({message: "Successfully updated preferences!"});
+        });
+    });
+
+    app.get('/api/user/state', auth, function(req, res) {
+        User.find({username: req.body.username}, "state", function(err, user) {
+            if(err) res.send(err);
+
+            res.json(user[0]);
         });
     });
 
@@ -58,13 +109,13 @@ module.exports = function(app) {
         User.find({username: req.body.username}, function(err, user) {
             if(err) res.send(err);
 
-            user.state = req.body.state;
+            user[0].state = req.body.state;
 
-            user.save(function(err) {
+            user[0].save(function(err) {
                 if(err) res.send(err);
             });
 
-            res.json({message: "Successfully updated state!"});
+            res.json({message: "Successfully updated preferences!"});
         });
     });
 
