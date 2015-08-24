@@ -92,25 +92,17 @@ module.exports = function(app) {
             });
         });
 
-        res.json({message: "Success!"});
+        res.json({message: "Request received!"});
     });
 
     app.post('/api/books/trade/request/decline', auth, function(req, res) {
-        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+        Book.find({name: req.body.name}, function(err, book) {
             if(err) res.send(err);
 
             book[0].available = true;
 
             book[0].save(function(err) {
                 if(err) res.send(err);
-            });
-
-            User.find({username: req.body.username}, function(err, user) {
-                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name), 1);
-
-                user[0].save(function(err) {
-                    if(err) res.send(err);
-                })
             });
 
             User.find({borrowRequests: req.body.name}, function(err, user) {
@@ -120,11 +112,21 @@ module.exports = function(app) {
                     if(err) res.send(err);
                 })
             });
+
+            User.find({username: req.body.username}, function(err, user) {
+                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name), 1);
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
         });
+
+        res.json({message: "Request received!"});
     });
 
     app.post('/api/books/trade/request/cancel', auth, function(req, res) {
-        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+        Book.find({name: req.body.name}, function(err, book) {
             if(err) res.send(err);
 
             book[0].available = true;
@@ -154,7 +156,7 @@ module.exports = function(app) {
     });
 
     app.post('/api/books/trade/request/end', auth, function(req, res) {
-        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+        Book.find({name: req.body.name}, function(err, book) {
             if(err) res.send(err);
 
             book[0].available = true;
