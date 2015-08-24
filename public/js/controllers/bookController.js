@@ -1,4 +1,5 @@
 readNook.controller("bookController", function($scope, $http, auth, $location) {
+    $scope.homeClass = "";
     $scope.isLoggedIn = auth.isLoggedIn;
     $scope.currentUser = auth.currentUser();
     $scope.logOut = auth.logOut;
@@ -7,22 +8,33 @@ readNook.controller("bookController", function($scope, $http, auth, $location) {
         $location.path('/');
     }
 
+    $scope.removeBook = function(book) {
+        $scope.books.splice($scope.books.indexOf(book), 1);
+
+        $http.post('/api/user/books/delete', book, {headers:{Authorization: 'Bearer '+auth.getToken()}})
+            .success(function(data) {
+                $scope.showSuccessAlert = true;
+                $scope.message = data.message;
+            })
+            .error(function(err) {
+                console.log("Error: " + err);
+            });
+    };
+
+    $scope.trade = function(book) {
+
+    }
+
     $http.get('/api/books', {headers:{Authorization: 'Bearer '+auth.getToken()}})
         .success(function(books) {
-            /*$scope.books = users.map(function(user) {
-                var books = user.books.map(function(book) {
-                    book.username = user.username;
-                    return book;
-                });
-                return books;
+            $scope.books = books.map(function(book) {
+                if(book.username === auth.currentUser()) {
+                    book.trade = false;
+                } else {
+                    book.trade = true;
+                }
+                return book;
             });
-
-            $scope.books = $scope.books.reduce(function(prev_book, next_book) {
-                return prev_book.concat(next_book);
-            }, []);
-
-            console.log($scope.books);*/
-            $scope.books = books;
         })
         .error(function(err) {
             console.log("Error: " + err);

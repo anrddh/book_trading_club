@@ -13,7 +13,7 @@ module.exports = function(app) {
     });
 
     app.get('/api/books', auth, function(req, res) {
-        Book.find({}, function(err, books) {
+        Book.find({available: true}, function(err, books) {
             res.json(books);
         });
     });
@@ -21,9 +21,10 @@ module.exports = function(app) {
     app.post('/api/user/books/add', auth, function(req, res) {
         var book = new Book();
 
-        book.username = req.body.username;
-        book.name = req.body.name;
-        book.author = req.body.author;
+        book.username  = req.body.username;
+        book.name      = req.body.name;
+        book.author    = req.body.author;
+        book.available = true;
 
         book.save(function(err) {
             if(err) res.send(err);
@@ -37,6 +38,107 @@ module.exports = function(app) {
             if(err) res.send(err);
 
             book[0].remove();
+
+            res.json({message: "Successfully removed book!"});
+        });
+    });
+
+    app.post('/api/books/trade/request', auth, function(req, res) {
+        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+            if(err) res.send(err);
+
+            book[0].available = false;
+
+            User.find({username: req.body.username}, function(err, user) {
+                user[0].lendRequests.push(req.body.name);
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+
+            User.find({username: req.body.usernameR}, function(err, user) {
+                user[0].borrowRequests.push(req.body.name);
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+
+            res.json({message: "Successfully sent borrow request!"});
+        });
+    });
+
+    app.post('/api/books/trade/request/accept', auth, function(req, res) {
+        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+            if(err) res.send(err);
+
+            User.find({username: req.body.username}, function(err, user) {
+                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name));
+                user[0].lent.push(req.body.name);
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+
+            User.find({username: req.body.usernameR}, function(err, user) {
+                user[0].borrowRequests.splice(user[0].borrowRequests.indexOf(req.body.name));
+                user[0].borrowed.push(req.body.name);
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+        });
+    });
+
+    app.post('/api/books/trade/request/decline', auth, function(req, res) {
+        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+            if(err) res.send(err);
+
+            book[0].available = true;
+
+            User.find({username: req.body.username}, function(err, user) {
+                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name));
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+
+            User.find({username: req.body.usernameR}, function(err, user) {
+                user[0].borrowRequests.splice(user[0].borrowRequests.indexOf(req.body.name));
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+        });
+    });
+
+
+    app.post('/api/books/trade/cancel', auth, function(req, res) {
+        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+            if(err) res.send(err);
+
+            book[0].available = true;
+
+            User.find({username: req.body.username}, function(err, user) {
+                user[0].lent.splice(user[0].lent.indexOf(req.body.name));
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+
+            User.find({username: req.body.usernameR}, function(err, user) {
+                user[0].borrowed.splice(user[0].borrowed.indexOf(req.body.name));
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
 
             res.json({message: "Successfully removed book!"});
         });

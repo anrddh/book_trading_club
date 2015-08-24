@@ -9,7 +9,11 @@ var userSchema = new Schema({
     city: String,
     state: String,
     hash: String,
-    salt: String
+    salt: String,
+    borrowRequests: [String],
+    lendRequests: [String],
+    borrowed: [String],
+    lent: [String]
 });
 
 userSchema.methods.setPassword = function(password){

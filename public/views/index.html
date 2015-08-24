@@ -37,15 +37,15 @@
                     </div>
                     <div id="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="#/">Home</a></li>
-                            <li ng-show="isLoggedIn()"><a href="#/books">All Books</a></li>
+                            <li class="{{homeClass}}"><a href="#/">Home</a></li>
+                            <li class="{{allBooksClass}}" ng-show="isLoggedIn()"><a href="#/books">All Books</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li ng-show="isLoggedIn()"><a href="#/user/books">My Books</a></li>
-                            <li ng-show="isLoggedIn()"><a href="#/user">{{ currentUser }}</a></li>
+                            <li class="{{myBooksClass}}" ng-show="isLoggedIn()"><a href="#/user/books">My Books</a></li>
+                            <li class="{{userClass}}" ng-show="isLoggedIn()"><a href="#/user">{{ currentUser }}</a></li>
                             <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log out</a></li>
-                            <li ng-hide="isLoggedIn()"><a href="#/login">Login</a></li>
-                            <li ng-hide="isLoggedIn()"><a href="#/register">Sign Up</a></li>
+                            <li class="{{loginClass}}" ng-hide="isLoggedIn()"><a href="#/login">Login</a></li>
+                            <li class="{{signUpClass}}" ng-hide="isLoggedIn()"><a href="#/register">Sign Up</a></li>
                         </ul>
                     </div>
                 </div>
