@@ -3,9 +3,13 @@ readNook.controller("bookController", function($scope, $http, auth, $location) {
     $scope.currentUser = auth.currentUser();
     $scope.logOut = auth.logOut;
 
-    $http.get('/api/users', {headers:{Authorization: 'Bearer '+auth.getToken()}})
-        .success(function(users) {
-            $scope.books = users.map(function(user) {
+    if(!auth.isLoggedIn()) {
+        $location.path('/');
+    }
+
+    $http.get('/api/books', {headers:{Authorization: 'Bearer '+auth.getToken()}})
+        .success(function(books) {
+            /*$scope.books = users.map(function(user) {
                 var books = user.books.map(function(book) {
                     book.username = user.username;
                     return book;
@@ -17,7 +21,8 @@ readNook.controller("bookController", function($scope, $http, auth, $location) {
                 return prev_book.concat(next_book);
             }, []);
 
-            console.log($scope.books);
+            console.log($scope.books);*/
+            $scope.books = books;
         })
         .error(function(err) {
             console.log("Error: " + err);

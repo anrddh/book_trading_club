@@ -1,52 +1,42 @@
 var User     = require('./models/user.js').user;
+var Book     = require('./models/book.js').book;
 var passport = require('passport');
 var jwt      = require('express-jwt');
 var auth     = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 module.exports = function(app) {
     app.get('/api/user/books/:user_name', auth, function(req, res) {
-        User.find({username: req.params.user_name}, "books", function(err, books) {
+        Book.find({username: req.params.user_name}, function(err, books) {
             if(err) res.send(err);
             res.json(books);
         });
     });
 
-    app.get('/api/users', auth, function(req, res) {
-        User.find({}, "username books", function(err, users) {
-            res.json(users);
+    app.get('/api/books', auth, function(req, res) {
+        Book.find({}, function(err, books) {
+            res.json(books);
         });
     });
 
     app.post('/api/user/books/add', auth, function(req, res) {
-        User.find({username: req.body.username}, function(err, user) {
+        var book = new Book();
+
+        book.username = req.body.username;
+        book.name = req.body.name;
+        book.author = req.body.author;
+
+        book.save(function(err) {
             if(err) res.send(err);
-
-            var books = {
-                name: req.body.name,
-                author: req.body.author
-            }
-
-            user[0].books.push(books);
-
-            user[0].save(function(err) {
-                if(err) res.send(err);
-            });
-
-            res.json({message: "Successfully added book!"});
         });
+
+        res.json({message: "successfully added book!"});
     });
 
     app.post('/api/user/books/delete', auth, function(req, res) {
-        User.find({username: req.body.username}, function(err, user) {
+        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
             if(err) res.send(err);
 
-            var index = user[0].books.indexOf(req.body.book);
-
-            user[0].books.splice(index, 1);
-
-            user[0].save(function(err) {
-                if(err) res.send(err);
-            });
+            book[0].remove();
 
             res.json({message: "Successfully removed book!"});
         });

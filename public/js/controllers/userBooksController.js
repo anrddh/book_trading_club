@@ -1,8 +1,13 @@
 readNook.controller("userBooksController", function($scope, $http, auth, $location) {
     $scope.showSuccessAlert = false;
-    $scope.isLoggedIn = auth.isLoggedIn;
-    $scope.currentUser = auth.currentUser();
-    $scope.logOut = auth.logOut;
+    $scope.isLoggedIn       = auth.isLoggedIn;
+    $scope.currentUser      = auth.currentUser();
+    $scope.logOut           = auth.logOut;
+    $scope.books            = [];
+
+    if(!auth.isLoggedIn()) {
+        $location.path('/');
+    }
 
     $scope.addBook = function() {
         var book = {
@@ -10,7 +15,6 @@ readNook.controller("userBooksController", function($scope, $http, auth, $locati
             name: $scope.bookName,
             author: $scope.bookAuthor
         };
-
 
         $scope.bookName = "";
         $scope.bookAuthor = "";
@@ -28,11 +32,6 @@ readNook.controller("userBooksController", function($scope, $http, auth, $locati
     };
 
     $scope.removeBook = function(book) {
-        var b = {
-            username: auth.currentUser(),
-            book: book
-        }
-
         $scope.books.splice($scope.books.indexOf(book), 1);
 
         $http.post('/api/user/books/delete', book, {headers:{Authorization: 'Bearer '+auth.getToken()}})
@@ -47,7 +46,7 @@ readNook.controller("userBooksController", function($scope, $http, auth, $locati
 
     $http.get('/api/user/books/'+auth.currentUser(), {headers:{Authorization: 'Bearer '+auth.getToken()}})
         .success(function(books) {
-            $scope.books = books[0].books;
+            $scope.books = books;
         })
         .error(function(err) {
             console.log("Error: " + err);

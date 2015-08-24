@@ -4,6 +4,10 @@ readNook.controller("userController", function($scope, $http, auth, $location) {
     $scope.currentUser = auth.currentUser();
     $scope.logOut = auth.logOut;
 
+    if(!auth.isLoggedIn()) {
+        $location.path('/');
+    }
+
     $scope.updateInfo = function() {
         $http.post('/api/user/name/update', {name: $scope.name}, {headers:{Authorization: 'Bearer '+auth.getToken()}})
             .success(function(data) {
