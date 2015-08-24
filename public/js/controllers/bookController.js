@@ -22,7 +22,19 @@ readNook.controller("bookController", function($scope, $http, auth, $location) {
     };
 
     $scope.trade = function(book) {
-
+        var trade = {
+            username: book.username,
+            name: book.name,
+            usernameR: auth.currentUser()
+        }
+        $http.post('/api/books/trade/request', trade, {headers:{Authorization: 'Bearer '+auth.getToken()}})
+            .success(function(data) {
+                $scope.showSuccessAlert = true;
+                $scope.message = data.message;
+            })
+            .error(function(err) {
+                console.log("Error: " + err);
+            });
     }
 
     $http.get('/api/books', {headers:{Authorization: 'Bearer '+auth.getToken()}})

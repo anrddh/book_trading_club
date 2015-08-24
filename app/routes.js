@@ -49,6 +49,10 @@ module.exports = function(app) {
 
             book[0].available = false;
 
+            book[0].save(function(err) {
+                if(err) res.send(err);
+            });
+
             User.find({username: req.body.username}, function(err, user) {
                 user[0].lendRequests.push(req.body.name);
 
@@ -70,27 +74,25 @@ module.exports = function(app) {
     });
 
     app.post('/api/books/trade/request/accept', auth, function(req, res) {
-        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
-            if(err) res.send(err);
+        User.find({username: req.body.username}, function(err, user) {
+            user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name), 1);
+            user[0].lent.push(req.body.name);
 
-            User.find({username: req.body.username}, function(err, user) {
-                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name));
-                user[0].lent.push(req.body.name);
-
-                user[0].save(function(err) {
-                    if(err) res.send(err);
-                })
-            });
-
-            User.find({username: req.body.usernameR}, function(err, user) {
-                user[0].borrowRequests.splice(user[0].borrowRequests.indexOf(req.body.name));
-                user[0].borrowed.push(req.body.name);
-
-                user[0].save(function(err) {
-                    if(err) res.send(err);
-                })
+            user[0].save(function(err) {
+                if(err) res.send(err);
             });
         });
+
+        User.find({borrowRequests: req.body.name}, function(err, user) {
+            user[0].borrowRequests.splice(user[0].borrowRequests.indexOf(req.body.name), 1);
+            user[0].borrowed.push(req.body.name);
+
+            user[0].save(function(err) {
+                if(err) res.send(err);
+            });
+        });
+
+        res.json({message: "Success!"});
     });
 
     app.post('/api/books/trade/request/decline', auth, function(req, res) {
@@ -99,16 +101,20 @@ module.exports = function(app) {
 
             book[0].available = true;
 
+            book[0].save(function(err) {
+                if(err) res.send(err);
+            });
+
             User.find({username: req.body.username}, function(err, user) {
-                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name));
+                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name), 1);
 
                 user[0].save(function(err) {
                     if(err) res.send(err);
                 })
             });
 
-            User.find({username: req.body.usernameR}, function(err, user) {
-                user[0].borrowRequests.splice(user[0].borrowRequests.indexOf(req.body.name));
+            User.find({borrowRequests: req.body.name}, function(err, user) {
+                user[0].borrowRequests.splice(user[0].borrowRequests.indexOf(req.body.name), 1);
 
                 user[0].save(function(err) {
                     if(err) res.send(err);
@@ -117,23 +123,26 @@ module.exports = function(app) {
         });
     });
 
-
-    app.post('/api/books/trade/cancel', auth, function(req, res) {
+    app.post('/api/books/trade/request/cancel', auth, function(req, res) {
         Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
             if(err) res.send(err);
 
             book[0].available = true;
 
+            book[0].save(function(err) {
+                if(err) res.send(err);
+            });
+
             User.find({username: req.body.username}, function(err, user) {
-                user[0].lent.splice(user[0].lent.indexOf(req.body.name));
+                user[0].borrowRequests.splice(user[0].borrowRequests.indexOf(req.body.name), 1);
 
                 user[0].save(function(err) {
                     if(err) res.send(err);
                 })
             });
 
-            User.find({username: req.body.usernameR}, function(err, user) {
-                user[0].borrowed.splice(user[0].borrowed.indexOf(req.body.name));
+            User.find({lendRequests: req.body.name}, function(err, user) {
+                user[0].lendRequests.splice(user[0].lendRequests.indexOf(req.body.name), 1);
 
                 user[0].save(function(err) {
                     if(err) res.send(err);
@@ -144,8 +153,38 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/api/user/name', auth, function(req, res) {
-        User.find({username: req.body.username}, "name", function(err, user) {
+    app.post('/api/books/trade/request/end', auth, function(req, res) {
+        Book.find({username: req.body.username, name: req.body.name}, function(err, book) {
+            if(err) res.send(err);
+
+            book[0].available = true;
+
+            book[0].save(function(err) {
+                if(err) res.send(err);
+            });
+
+            User.find({username: req.body.username}, function(err, user) {
+                user[0].lent.splice(user[0].lent.indexOf(req.body.name), 1);
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+
+            User.find({borrowed: req.body.name}, function(err, user) {
+                user[0].borrowed.splice(user[0].borrowed.indexOf(req.body.name), 1);
+
+                user[0].save(function(err) {
+                    if(err) res.send(err);
+                })
+            });
+
+            res.json({message: "Successfully removed book!"});
+        });
+    });
+
+    app.get('/api/user/:username', auth, function(req, res) {
+        User.find({username: req.params.username}, function(err, user) {
             if(err) res.send(err);
 
             res.json(user[0]);
