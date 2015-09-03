@@ -7,7 +7,7 @@
     <hr>
     <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
     <div ng-repeat="book in books">
-        <strong>{{book.name}}</strong> by {{book.author}}. Owned by <em>{{book.username}}</em><a ng-click="trade(book)"><span ng-show="book.trade" class="glyphicon glyphicon-retweet" aria-hidden="true"></span></a><a ng-click="removeBook(book)"><span ng-hide="book.trade" class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>.
+        <strong>{{book.name}}</strong> by {{book.author}}. Owned by <em>{{book.username}}</em> <span ng-show="book.trade">/</span> <a ng-click="trade(book)" ng-show="book.trade">Request to Trade</a> <span ng-hide="book.trade">/</span> <a ng-click="removeBook(book)" ng-hide="book.trade">Remove book</a>
     </div>
     <hr>
 </div>
